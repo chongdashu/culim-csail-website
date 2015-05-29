@@ -18,6 +18,193 @@
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <style>
+    .pub-author-me {
+      font-weight: bold;
+    }
+
+  </style>
+  <script>
+
+    var NUM_MONTH = [
+      "",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+      "",
+    ];
+
+    var lis = [];
+
+    $(document).ready(function() {
+
+        publication_entries = $(".publication-entry");
+
+        publication_entries.each(function(index, entry) {
+
+          console.log("index=%s, entry=%o", index, entry);
+
+          var output = "";
+
+          // Authors
+          // -------
+          var authors = $(entry).find("span.authors").html().trim().split(",");
+
+          var i=0;
+          for (i=0; i < authors.length; i++) {
+             output += "<span class=\"pub-author\">" + authors[i].trim() + "</span>";
+
+             if (i < authors.length-1) {
+                  // not the last item
+                  output += ", ";      
+
+                  if (i == authors.length-2) {
+                    output += "and ";
+                  }          
+
+
+             }
+
+          }
+
+          output += ". ";
+
+          // Year
+          // ----
+          var year = $(entry).find("span.year").html().trim();
+
+          output += "(" + year + ")";
+
+          output += ". ";
+
+          // File
+          var file = $(entry).find("span.file");
+          var filename = "";
+          if (file.html()) {
+            filename = $(file).html().trim()
+          }
+
+          // Title
+          // -----
+          var title = $(entry).find("span.title").html().trim();
+
+          if (file.html()) {
+            output += "<a href=\"" + filename +"\">";
+          }
+          output += "\"" + title + ".\" ";
+
+          if (file.html()) {
+            output += "</a>";
+          }
+
+          // Publication
+          // -----
+          var publication = $(entry).find("span.publication").html().trim();
+
+          output += "In <i>" + publication + "</i>";
+
+          // Venue
+          // -----
+          var location = $(entry).find("span.location").html().trim();
+
+          output += ", " + location + ". ";
+
+          // Day
+          // ---
+          var day = $(entry).find("span.day").html().trim();
+          
+          // Month
+          // -----
+          var month = $(entry).find("span.month").html().trim();
+
+          // Date
+          // ----
+          var date = $(entry).find("span.date").html().trim();
+
+          // override here
+          date = NUM_MONTH[parseInt(month, 10)] + "-" + day.split("-")[0];
+
+          if (day.split("-").length > 1) {
+            date += " - ";
+            date += NUM_MONTH[parseInt(month, 10)] + "-" + day.split("-")[1];
+          }
+
+          output += " " + date + ", " + year + ".";
+
+          // Pages
+          // -----
+          var pages = $(entry).find("span.pages").html().trim();
+
+          output += " " + pages + ".";
+          
+          // Create list item
+          // ----------------
+
+
+          var li = {};
+          li.html = $("<li></li>").html(output);
+          li.year = parseInt(year, 10);
+          li.month = parseInt(month, 10);
+          li.day = parseInt(day.split("-")[day.split("-").length-1], 10);
+
+
+          lis.push(li);
+
+          lis.sort(function(li1, li2) {
+            if (li1.year > li2.year) {
+              return 1;
+            }
+            else if (li1.year < li2.year) {
+              return -1;
+            }
+            else {
+              if (li1.month > li2.month) {
+                return 1;
+              }
+              else if (li1.month < li2.month) {
+                return -1;
+              }
+              else {
+                if (li1.day > li2.day) {
+                  return 1;
+                }
+                else if (li1.day < li2.day) {
+                  return -1;
+                }
+              }
+            }
+          }).reverse();
+
+          $(lis).each(function(i,li){ 
+            $(".publication-list").append(li.html);
+          });
+          
+
+          // Find all instances of my name, and bold it.
+          // ----
+          $(".pub-author").each(function(i,e) {
+            console.log($(e).html())
+            if ($(e).html()=="Chong-U Lim") {
+              $(e).addClass("pub-author-me");
+            }
+
+          });
+
+
+        });
+
+    });
+  </script>
 </head>
 
 <body>
@@ -63,14 +250,235 @@
             <i class="fa fa-twitter"></i>@chongdashu
             </a>
             </div>
-            
-
-
         </div>
     </div>
     <div class="row">
-        
+        <div class="col-md-12">
+          <h2>Publications</h2>
+
+          <h3>Proceedings of Refereed Conferences</h3>
+          <div class="temp">
+            <ul class="publication-list">
+
+
+            </ul>
+          </div>
+        </div>
+
     </div>
+
+    <div class="publications hidden">
+
+      
+      <!-- publication entry -->
+      <div class="publication-entry">
+            <span class="authors">
+              Chong-U Lim, D. Fox Harrell
+            </span>
+            <span class="year">
+              2015
+            </span>
+            <span class="title">
+              Developing Computational Models of Players' Identities and Values from Videogame Avatars</span>
+            <span class="publication">
+              Proceedings of the 10th International Conference on the Foundations of Digital Games (FDG2015)
+            </span>
+            <span class="location">
+              Pacific Grove, CA, USA
+            </span>
+            <span class="date">
+              Jun-22 - Jun-25
+            </span>
+            <span class="month">
+              6
+            </span>
+            <span class="day">
+              22-25
+            </span>
+            <span class="pages">
+              5 pp
+            </span>
+            <span class="status">
+              To Appear
+            </span>
+      </div>
+
+      <!-- publication entry -->
+      <div class="publication-entry">
+            <span class="authors">
+              D. Fox Harrell, Dominic Kao, Chong-U Lim
+            </span>
+            <span class="year">
+              2015
+            </span>
+            <span class="title">
+              Toward Understanding Real-World Social Impacts of Avatars
+            </span>
+            <span class="publication">
+              "The End(s) of Electronic Literature," Conference of the Electronic Literature Organization (ELO2015)
+            </span>
+            <span class="location">
+              Bergen, Norway
+            </span>
+            <span class="date">
+              Aug-5 - Aug-7
+            </span>
+            <span class="month">
+              8
+            </span>
+            <span class="day">
+              5-7
+            </span>
+            <span class="pages">
+              2 pp
+            </span>
+      </div>
+
+      <!-- publication entry -->
+      <div class="publication-entry">
+            <span class="authors">
+              Chong-U Lim, D. Fox Harrell
+            </span>
+            <span class="year">
+              2015
+            </span>
+            <span class="title">
+              Revealing Social Identity Phenomena in Videogames with Archetypal Analysis
+            </span>
+            <span class="publication">
+              Proceedings of the 5th AISB Symposium on AI and Games (AISB2015)
+            </span>
+            <span class="location">
+              Kent, Canterbury, UK
+            </span>
+            <span class="date">
+              Apr-20
+            </span>
+            <span class="month">
+              4
+            </span>
+            <span class="day">
+              20
+            </span>
+            <span class="pages">
+              6 pp
+            </span>
+            <span class="file">
+              
+            </span>
+      </div>
+
+      <!-- publication entry -->
+      <div class="publication-entry">
+            <span class="authors">
+              Chong-U Lim, D. Fox Harrell
+            </span>
+            <span class="year">
+              2015
+            </span>
+            <span class="title">
+              Toward Telemetry-driven Analytics for Understanding Players and their Avatars in Videogames
+            </span>
+            <span class="publication">
+              CHI'15 Extended Abstracts on Human Factors in Computing Systems (CHI2015)
+            </span>
+            <span class="location">
+              Seoul, South Korea
+            </span>
+            <span class="date">
+              Apr-20 - Apr-23
+            </span>
+            <span class="month">
+              4
+            </span>
+            <span class="day">
+              20-23
+            </span>
+            <span class="pages">
+              pp. 1175 - 1180
+            </span>
+            <span class="file">
+              lim2015toward.pdf
+            </span>
+      </div>
+
+     <!-- publication entry -->
+      <div class="publication-entry">
+            <span class="authors">
+              Chong-U Lim, D. Fox Harrell
+            </span>
+            <span class="year">
+              2014
+            </span>
+            <span class="title">
+              Developing Social Identity Models of Players from Game Telemetry Data
+            </span>
+            <span class="publication">
+              Proceedings of the 10th AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment (AIIDE2015)
+            </span>
+            <span class="location">
+              Raleigh, NC, USA
+            </span>
+            <span class="date">
+              Oct-3 - Oct-7
+            </span>
+            <span class="month">
+              10
+            </span>
+            <span class="day">
+              3-7
+            </span>
+            <span class="pages">
+              pp. 125 - 131
+            </span>
+            <span class="file">
+              lim2014developing.pdf
+            </span>
+      </div>
+
+      <!-- publication entry -->
+      <div class="publication-entry">
+            <span class="authors">
+              Chong-U Lim, D. Fox Harrell
+            </span>
+            <span class="year">
+              2014
+            </span>
+            <span class="title">
+              An Approach to General Videogame Evaluation and Automatic Generation using a Description Language
+            </span>
+            <span class="publication">
+              Proceedings of the IEEE Conference on Computational Intelligence and Games (CIG2014)
+            </span>
+            <span class="location">
+              Dortmund, Germany
+            </span>
+            <span class="date">
+              Aug-26 - Aug-29
+            </span>
+            <span class="month">
+              8
+            </span>
+            <span class="day">
+              26-29
+            </span>
+            <span class="pages">
+              pp. 125 - 131
+            </span>
+            <span class="file">
+              lim2014developing.pdf
+            </span>
+      </div>
+
+    </div>
+    <!-- end hidden pubs -->
+     
+    </div>
+
+      
+
+
+      
 
 </div>
 
