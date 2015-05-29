@@ -44,15 +44,15 @@
       "",
     ];
 
-    var lis = [];
+    
 
-    $(document).ready(function() {
 
-        publication_entries = $(".publication-entry");
+    var generate_publications = function(entries, list) {
 
+        var lis = [];
+        publication_entries = $(entries);
         publication_entries.each(function(index, entry) {
 
-          console.log("index=%s, entry=%o", index, entry);
 
           var output = "";
 
@@ -117,7 +117,9 @@
           // -----
           var location = $(entry).find("span.location").html().trim();
 
-          output += ", " + location + ". ";
+          if (location.length > 0) {
+            output += ", " + location + ". ";
+          }
 
           // Day
           // ---
@@ -145,11 +147,12 @@
           // -----
           var pages = $(entry).find("span.pages").html().trim();
 
-          output += " " + pages + ".";
+          if (pages.length > 0){
+            output += " " + pages + ".";
+          }
           
           // Create list item
           // ----------------
-
 
           var li = {};
           li.html = $("<li></li>").html(output);
@@ -160,48 +163,95 @@
 
           lis.push(li);
 
-          lis.sort(function(li1, li2) {
-            if (li1.year > li2.year) {
+        });
+
+        lis.sort(function(li1, li2) {
+          if (li1.year > li2.year) {
+            return 1;
+          }
+          else if (li1.year < li2.year) {
+            return -1;
+          }
+          else {
+            if (li1.month > li2.month) {
               return 1;
             }
-            else if (li1.year < li2.year) {
+            else if (li1.month < li2.month) {
               return -1;
             }
             else {
-              if (li1.month > li2.month) {
+              if (li1.day > li2.day) {
                 return 1;
               }
-              else if (li1.month < li2.month) {
+              else if (li1.day < li2.day) {
                 return -1;
               }
-              else {
-                if (li1.day > li2.day) {
-                  return 1;
-                }
-                else if (li1.day < li2.day) {
-                  return -1;
-                }
-              }
             }
-          }).reverse();
+          }
+        }).reverse();
 
-          $(lis).each(function(i,li){ 
-            $(".publication-list").append(li.html);
-          });
-          
+        $(lis).each(function(i,li){ 
+          $(list).append(li.html);
+        });
+    }
 
-          // Find all instances of my name, and bold it.
-          // ----
-          $(".pub-author").each(function(i,e) {
-            console.log($(e).html())
-            if ($(e).html()=="Chong-U Lim") {
-              $(e).addClass("pub-author-me");
-            }
+    $(document).ready(function() {
 
-          });
+        generate_publications(
+          ".publication-entry.conference", 
+          ".publication-list.conference");
 
+        generate_publications(
+          ".publication-entry.journal", 
+          ".publication-list.journal")
+
+        generate_publications(
+          ".publication-entry.demo", 
+          ".publication-list.demo")
+
+        // Find all instances of my name, and bold it.
+        // ----
+        $(".pub-author").each(function(i,e) {
+          console.log($(e).html())
+          if ($(e).html()=="Chong-U Lim") {
+            $(e).addClass("pub-author-me");
+          }
 
         });
+
+        // summary
+        // -------
+
+        var summary = "";
+
+        // journals
+        // --------
+
+        var lis_journals = $(".publication-list.journal").children();
+
+        summary += lis_journals.length + " " + "journal articles";
+
+        summary += ", ";
+
+        // conferences 
+        // -----------
+
+        var lis_confs = $(".publication-list.conference").children();
+
+        summary += lis_confs.length + " " + "conference/symposium papers";
+
+        summary += ", and ";
+
+        // demos
+        // -----
+
+        var lis_demos = $(".publication-list.demo").children();
+
+        summary += lis_demos.length + " " + "exhibitions/demonstrations";
+
+
+        summary += " in reversed chronological order."
+        $(".publications-summary").html(summary);
 
     });
   </script>
@@ -221,14 +271,21 @@
 
         <div class="col-lg-10">
           <div class="row">
-            <div class="col-sm-4 col-lg-3">
+            <div class="col-sm-4 col-md-3 col-lg-3">
               <img src="profile.png" class=""></img>
             </div>
-            <div class="col-sm-8 col-lg-9">
-              <h4>Hi, there!</h4>
-              I am a PhD Candidate at MIT and CSAIL. My supervisor is Prof. Fox Harrell and I work at the Imagination, Computation and Expression Lab.
+            <div class="col-sm-8 col-md-9 col-lg-9">
+              <p>
+              I am a PhD Candidate at <a href="http://mit.edu">MIT</a> and <a href="http://csail.mit.edu">CSAIL</a>.
+              My supervisor is Prof. Fox Harrell and I work at the <a href="http://icelab.mit.edu">Imagination, Computation and Expression Lab.</a>
 
               In my research, I adopt a cross-disciplinary approach to the design and development of computational technologies that enable us to understand digital media systems and their users better. This incorporates theory and techniques from computer science, cognitive science, social science and the humanities. More broadly, my research interests span:
+              <ul class="lead">
+                  <li>Artificial Intelligence</li>
+                  <li>Human-Computer Interaction and Design</li>
+                  <li>Computational Intelligence and Video Games</li>
+              </uL>
+            </p>
             </div>
           </div>
         </div>
@@ -256,13 +313,29 @@
         <div class="col-md-12">
           <h2>Publications</h2>
 
-          <h3>Proceedings of Refereed Conferences</h3>
-          <div class="temp">
-            <ul class="publication-list">
+          <div class="publications-summary">
 
+          </div>
+          <hr>
 
+          <div>
+            <h3>Refereed Journal Articles</h3>
+            <ul class="publication-list journal">
             </ul>
           </div>
+
+          <div>
+            <h3>Proceedings of Refereed Conferences</h3>
+            <ul class="publication-list conference">
+            </ul>
+          </div>
+
+          <div>
+            <h3>Juried Exhibitions &amp; Demonstrations</h3>
+            <ul class="publication-list demo">
+            </ul>
+          </div>
+
         </div>
 
     </div>
@@ -271,7 +344,7 @@
 
       
       <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
             <span class="authors">
               Chong-U Lim, D. Fox Harrell
             </span>
@@ -304,7 +377,80 @@
       </div>
 
       <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry journal">
+            <span class="authors">
+             D. Fox Harrell,
+             Chong-U Lim,
+             Jia Zhang,
+             Sonny Sidhu,
+             Jason Lipshin,
+             Ayse Gursoy
+            </span>
+            <span class="year">
+              2014
+            </span>
+            <span class="title">
+               Playing Mimesis: Engendering Understanding Via Experience of Social Discrimination with an Interactive Narrative Game.
+            </span>
+            <span class="publication">
+              Electronic Book Review
+            </span>
+            <span class="location">
+              EBR
+            </span>
+            <span class="month">
+              11
+            </span>
+            <span class="day">
+              2
+            </span>
+            <span class="pages">
+              
+            </span>
+            <span class="file">
+              http://www.electronicbookreview.com/thread/electropoetics/mimesis
+            </span>
+      </div>
+
+      <!-- publication entry -->
+      <div class="publication-entry journal">
+            <span class="authors">
+              Diego Perez,
+              Spyridon Samothrakis,
+              Julian Togelius,
+              Tom Schaul,
+              Adrien Couetoux,
+              Jerry Lee,
+              Chong-U Lim,
+              Tommy Thompson
+            </span>
+            <span class="year">
+              2015
+            </span>
+            <span class="title">
+              The 2014 General Video Game Playing Competition
+            </span>
+            <span class="publication">
+              IEEE Transactions on Computational Intelligence and AI in Games (T-CIAIG)
+            </span>
+            <span class="location">
+            </span>
+            <span class="month">
+              2
+            </span>
+            <span class="day">
+              10
+            </span>
+            <span class="pages">
+              DOI: 10.1109/TCIAIG.2015.2402393
+            </span>
+            <span class="file">
+              http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7038214&sortType%3Dasc_p_Sequence%26filter%3DAND%28p_Publication_Number%3A4804728%29%26rowsPerPage%3D75
+            </span>
+      </div>
+
+      <!-- publication entry -->
+      <div class="publication-entry conference">
             <span class="authors">
               D. Fox Harrell, Dominic Kao, Chong-U Lim
             </span>
@@ -330,12 +476,11 @@
               5-7
             </span>
             <span class="pages">
-              2 pp
             </span>
       </div>
 
       <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
             <span class="authors">
               Chong-U Lim, D. Fox Harrell
             </span>
@@ -369,7 +514,7 @@
       </div>
 
       <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
             <span class="authors">
               Chong-U Lim, D. Fox Harrell
             </span>
@@ -403,7 +548,7 @@
       </div>
 
      <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
             <span class="authors">
               Chong-U Lim, D. Fox Harrell
             </span>
@@ -437,7 +582,7 @@
       </div>
 
       <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
             <span class="authors">
               Chong-U Lim, D. Fox Harrell
             </span>
@@ -471,7 +616,7 @@
       </div>
 
       <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
             <span class="authors">
                D. Fox Harrell,
                Dominic Kao,
@@ -507,7 +652,7 @@
       </div>
 
       <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
             <span class="authors">
                D. Fox Harrell,
                Dominic Kao,
@@ -543,7 +688,7 @@
       </div>
 
     <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
             <span class="authors">
                D. Fox Harrell,
                Dominic Kao,
@@ -581,7 +726,7 @@
       </div>
 
       <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
             <span class="authors">
                Chong-U Lim,
                D. Fox Harrell
@@ -614,7 +759,41 @@
       </div>
 
       <!-- publication entry -->
-      <div class="publication-entry">
+      <div class="publication-entry conference">
+            <span class="authors">
+               D. Fox Harrell
+               Dominic Kao,
+               Chong-U Lim
+            </span>
+            <span class="year">
+              2013
+            </span>
+            <span class="title">
+              Computationally Modeling Narratives of Social Group Membership with the Chimeria System
+            </span>
+            <span class="publication">
+              Proceedings of the 2013 Workshop on Computational Models of Narrative (CMN2013), A satellite workshop of CogSci 2013: The 35th meeting of the Cognitive Science Society 
+            </span>
+            <span class="location">
+              Berlin, Germany
+            </span>
+
+            <span class="month">
+              7
+            </span>
+            <span class="day">
+              31
+            </span>
+            <span class="pages">
+              pp. 123 - 128
+            </span>
+            <span class="file">
+              http://drops.dagstuhl.de/opus/volltexte/2013/4154/pdf/p123-harell.pdf
+            </span>
+      </div>
+
+      <!-- publication entry -->
+      <div class="publication-entry conference">
             <span class="authors">
                Chong-U Lim,
                Robin Baumgarten,
@@ -645,6 +824,109 @@
             <span class="file">
               lim2010evolving.pdf
             </span>
+      </div>
+
+      <!-- publication entry -->
+      <div class="publication-entry demo">
+            <span class="authors">
+               D. Fox Harrell,
+               Domininc Kao,
+               Chong-U Lim,
+               Jason Lipshin,
+               Ainsley Sutherland,
+               Julia Makivic
+            </span>
+            <span class="year">
+              2014
+            </span>
+            <span class="title">
+              An Intelligent Narrative System for Modeling Social Identity-Related Experiences
+            </span>
+            <span class="publication">
+              The 7th Intelligent Narrative Technologies Workshop (INT7)
+            </span>
+            <span class="location">
+              Milwaukee, WI
+            </span>
+
+            <span class="month">
+              6
+            </span>
+            <span class="day">
+              17-18
+            </span>
+            <span class="pages">
+            </span>
+
+      </div>
+
+      <!-- publication entry -->
+      <div class="publication-entry demo">
+            <span class="authors">
+               D. Fox Harrell,
+               Domininc Kao,
+               Chong-U Lim,
+               Jason Lipshin,
+               Ainsley Sutherland,
+               Julia Makivic
+            </span>
+            <span class="year">
+              2014
+            </span>
+            <span class="title">
+              Exploring Everyday Creative Responses to Social Discrimination with the Mimesis System
+            </span>
+            <span class="publication">
+              Proceedings of the International Conference on Computational Creativity (ICCC2013)
+            </span>
+            <span class="location">
+              Dublin, Ireland
+            </span>
+
+            <span class="month">
+              5
+            </span>
+            <span class="day">
+              30
+            </span>
+            <span class="pages">
+            </span>
+            <span class="file">
+              http://groups.csail.mit.edu/icelab/sites/default/files/pdf/Harrell-ICCC2012-demo-final.pdf
+            </span>
+
+      </div>
+
+       <!-- publication entry -->
+      <div class="publication-entry demo">
+            <span class="authors">
+               D. Fox Harrell,
+               Chong-U Lim,
+               Sonny Sidhu
+            </span>
+            <span class="year">
+              2012
+            </span>
+            <span class="title">
+              Exploring Social Discrimination through Interactive Narrative using Mimesis
+            </span>
+            <span class="publication">
+              New Media Consortium Conference (NMC2012)
+            </span>
+            <span class="location">
+              Cambridge, MA, USA
+            </span>
+
+            <span class="month">
+              6
+            </span>
+            <span class="day">
+              10
+            </span>
+            <span class="pages">
+            </span>
+
+
       </div>
 
     </div>
