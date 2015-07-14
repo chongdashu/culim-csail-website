@@ -122,6 +122,21 @@ def get_html(entry):
     html += ". "
     # - space -    
 
+    pages = entry.get("pages")
+    if not pages:
+        pages = entry.get("pagetotal")
+    if pages:
+        if pages.find("-") >= 0:
+            pages = pages.replace("--", "-")
+            html += '<span class="pages">p. %s.</span>' % (pages)
+        else:
+            html += '<span class="pages">%s pp.</span>' % (pages)
+
+    # - space -
+    html += ""
+    # - space -    
+
+
 
     # Close
     # -----
