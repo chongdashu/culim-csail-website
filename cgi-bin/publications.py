@@ -6,6 +6,7 @@ print ""
 
 import bibtexparser
 import os
+import re
 
 bib = None
 plint_cache = ""
@@ -41,8 +42,9 @@ def get_html(entry):
 
     # Authors
     # -------
-    authors = [author.strip() for author in entry["author"].split("and\s")]
+    authors = [author.strip() for author in entry["author"].split(" and")]
     authors = map(lambda x: x.split(",")[1].strip() + " " + x.split(",")[0].strip(), authors)
+
 
     html += '<span class="author">%s</span>' % (authors[0])
     for i in range(1, len(authors)):
