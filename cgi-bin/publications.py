@@ -1,7 +1,15 @@
+#!/usr/bin/python
+
+print "Content-type: text/html"
+# print "Access-Control-Allow-Origin: *"
+print ""
+
 import bibtexparser
+import os
 
 bib = None
 plint_cache = ""
+entries = []
 
 
 def plint(text=""):
@@ -12,24 +20,28 @@ def plint(text=""):
 
 def main():
     global bib
+    global entries
 
     filepath = "culim.bib"
     bib = bibtexparser.loads(open(filepath).read())
 
-    for entry in bib.entries:
+    plint("<ul>")
+
+    entries = bib.entries[:]
+    entries = sorted(entries, key=lambda x: -int(x["year"]))
+    for entry in entries:
         get_html(entry)
+    plint("</ol>")
 
 
 def get_html(entry):
 
     html = ""
-    html = "<div>"
+    html = "<li>"
 
     # Authors
     # -------
     authors = [author.strip() for author in entry["author"].split("and\s")]
-    print entry["title"]
-    print authors
     authors = map(lambda x: x.split(",")[1].strip() + " " + x.split(",")[0].strip(), authors)
 
     html += '<span class="author">%s</span>' % (authors[0])
@@ -53,7 +65,12 @@ def get_html(entry):
 
     # Title
     # -------
-    html += '<span class="title">"%s"</span>' % (entry["title"])
+    key = entry["id"]
+    href = "#" if not os.path.isfile("../%s.pdf" % (key)) else "%s.pdf" % (key)
+    if href == "#":
+        html += '<span class="title">"%s"</span>' % (entry["title"])
+    else:
+        html += '<span class="title"><a href="../%s">"%s"</a></span>' % (href, entry["title"])
 
     # - space -
     html += ". "
@@ -61,17 +78,15 @@ def get_html(entry):
 
     # Book-Title
     # -------
-    html += '<span class="book-title">In proceedings of %s.</span>' % (entry["booktitle"])
-
+    html += '<span class="book-title">In <i>%s</i>.</span>' % (entry["booktitle"])
 
     # Close
     # -----
-    html += "</div>"
-
+    html += "</li>"
 
     plint(html)
 
 
 if __name__ == "__main__":
     main()
-    open("get_publications.html", "w").write(plint_cache)
+    open("publications.html", "w").write(plint_cache)
