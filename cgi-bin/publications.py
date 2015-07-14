@@ -25,11 +25,30 @@ def main():
 
     filepath = "culim.bib"
     bib = bibtexparser.loads(open(filepath).read())
+    output_html(bib.entries, "article")
+    output_html(bib.entries, "inproceedings")
+    output_html(bib.entries, "conference")
 
-    plint("<ul>")
 
-    entries = bib.entries[:]
-    entries = sorted(entries, key=lambda x: -int(x["year"]))
+def publication_type_to_name(publication_type):
+    if publication_type == "inproceedings":
+        return "Proceedings of Refereed Conferences"
+    elif publication_type == "article":
+        return "Refereed Journal Articles"
+    elif publication_type == "conference":
+        return "Juried Exhibitions &amp; Demonstrations"
+    else:
+        return publication_type
+
+
+def output_html(entries, publication_type):
+
+    plint("<h2>%s</h2>" % (publication_type_to_name(publication_type)))
+    plint("<ol>")
+
+    entries = [entry for entry in entries if entry["type"] == publication_type]
+    entries = sorted(entries, key=lambda x: 12*int(x["year"]) + (int(x.get("month")) if x.get("month") else 0))
+    entries = entries[::-1]
     for entry in entries:
         get_html(entry)
     plint("</ol>")
@@ -45,13 +64,14 @@ def get_html(entry):
     authors = [author.strip() for author in entry["author"].split(" and")]
     authors = map(lambda x: x.split(",")[1].strip() + " " + x.split(",")[0].strip(), authors)
 
-
-    html += '<span class="author">%s</span>' % (authors[0])
+    author = "<u>" + authors[0] + "</u>" if authors[0] == "Chong-U Lim" else authors[0]
+    html += '<span class="author">%s</span>' % (author)
     for i in range(1, len(authors)):
         sep = ", "
         if i == len(authors)-1:
             sep = ", and " if len(authors) > 2 else " and "
-        html += sep + '<span class="author">%s</span>' % (authors[i])
+        author = "<u>" + authors[i] + "</u>" if authors[i] == "Chong-U Lim" else authors[i]
+        html += sep + '<span class="author">%s</span>' % (author)
 
     # - space -
     html += ". "
@@ -70,17 +90,38 @@ def get_html(entry):
     key = entry["id"]
     href = "#" if not os.path.isfile("../%s.pdf" % (key)) else "%s.pdf" % (key)
     if href == "#":
-        html += '<span class="title">"%s"</span>' % (entry["title"])
+        html += '<span class="title">"%s."</span>' % (entry["title"])
     else:
-        html += '<span class="title"><a href="../%s">"%s"</a></span>' % (href, entry["title"])
+        html += '<span class="title"><a href="../%s">"%s</a>."</span>' % (href, entry["title"])
+
+    # - space -
+    html += " "
+    # - space -
+
+    # Book-Title
+    # -------
+    journal = "journal" if entry["type"] == "article" else "booktitle"
+    html += '<span class="book-title">In <i>%s</i></span>' % (entry[journal])
 
     # - space -
     html += ". "
     # - space -
 
-    # Book-Title
+    # Date
+    # ----
+
+    # Address
     # -------
-    html += '<span class="book-title">In <i>%s</i>.</span>' % (entry["booktitle"])
+    address = entry.get("location")
+    if not address:
+        address = entry.get("address")
+    if address:
+        html += '<span class="location">%s</span>' % (address)
+
+    # - space -
+    html += ". "
+    # - space -    
+
 
     # Close
     # -----
