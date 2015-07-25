@@ -27,7 +27,9 @@ def main():
     bib = bibtexparser.loads(open(filepath).read())
     output_html(bib.entries, "article")
     output_html(bib.entries, "inproceedings")
+    output_html(bib.entries, "workshop")
     output_html(bib.entries, "conference")
+    
 
 
 def publication_type_to_name(publication_type):
@@ -37,8 +39,19 @@ def publication_type_to_name(publication_type):
         return "Refereed Journal Articles"
     elif publication_type == "conference":
         return "Juried Exhibitions &amp; Demonstrations"
+    elif publication_type == "workshop":
+        return "Refereed Workshop Papers"
     else:
         return publication_type
+
+
+def isEntryOfType(entry, publication_type):
+    if publication_type == "workshop":
+        return entry["type"] == "inproceedings" and entry["booktitle"].lower().find("workshop") >= 0
+    if publication_type == "inproceedings":
+        return (entry["type"] == "inproceedings") and (not entry.get("booktitle") or (entry["booktitle"].lower().find("workshop") < 0))
+
+    return entry["type"] == publication_type
 
 
 def output_html(entries, publication_type):
@@ -46,7 +59,7 @@ def output_html(entries, publication_type):
     plint("<h2>%s</h2>" % (publication_type_to_name(publication_type)))
     plint("<ol>")
 
-    entries = [entry for entry in entries if entry["type"] == publication_type]
+    entries = [entry for entry in entries if isEntryOfType(entry, publication_type)]
     entries = sorted(entries, key=lambda x: 12*int(x["year"]) + (int(x.get("month")) if x.get("month") else 0))
     entries = entries[::-1]
     for entry in entries:
