@@ -105,7 +105,7 @@ def get_html(entry):
     if href == "#":
         html += '<span class="title">"%s."</span>' % (entry["title"])
     else:
-        html += '<span class="title"><a href="../%s">"%s</a>."</span>' % (href, entry["title"])
+        html += '<span class="title"><a href="%s">"%s</a>."</span>' % (href, entry["title"])
 
     # - space -
     html += " "
