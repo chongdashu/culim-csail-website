@@ -206,6 +206,10 @@
           ".publication-list.journal")
 
         generate_publications(
+          ".publication-entry.workshop", 
+          ".publication-list.workshop")
+
+        generate_publications(
           ".publication-entry.demo", 
           ".publication-list.demo")
 
@@ -239,6 +243,15 @@
         var lis_confs = $(".publication-list.conference").children();
 
         summary += lis_confs.length + " " + "conference/symposium papers";
+
+        summary += ", and ";
+
+        // workshops 
+        // -----------
+
+        var lis_confs = $(".publication-list.workshop").children();
+
+        summary += lis_confs.length + " " + "workshop papers";
 
         summary += ", and ";
 
@@ -447,6 +460,12 @@
             </div>
 
             <div>
+              <h3>Proceedings of Refereed Workshop Papers</h3>
+              <ul class="publication-list workshop">
+              </ul>
+            </div>
+
+            <div>
               <h3>Juried Exhibitions &amp; Demonstrations</h3>
               <ul class="publication-list demo">
               </ul>
@@ -464,7 +483,94 @@
     </div>
     
 
-    <div class="publications hidden">  
+    <div class="publications hidden"> 
+
+      <!-- publication entry -->
+      <div class="publication-entry workshop">
+            <span class="authors">
+             Chong-U Lim,
+             D. Fox Harrell
+            </span>
+            <span class="year">
+              2015
+            </span>
+            <span class="title">
+              Comparing Clustering Approaches for Modeling Players' Values through Avatar Construction
+            </span>
+            <span class="publication">
+              Proceedings of the 1st AIIDE Workshop on Player Modeling (PMWS2015)
+            </span>
+            <span class="location">
+              Santa Cruz, CA, USA
+            </span>
+            <span class="month">
+              11
+            </span>
+            <span class="day">
+              15
+            </span>
+            <span class="pages">
+              7 pp
+            </span>
+      </div> 
+
+      <!-- publication entry -->
+      <div class="publication-entry workshop">
+            <span class="authors">
+             Chong-U Lim,
+             D. Fox Harrell
+            </span>
+            <span class="year">
+              2015
+            </span>
+            <span class="title">
+              The Marginal: A Game for Modeling Players' Perceptions of Gradient Membership in Avatar Categories.
+            </span>
+            <span class="publication">
+              Proceedings of the 2nd AIIDE Workshop on Experimental AI and Games (EXAG2015)
+            </span>
+            <span class="location">
+              Santa Cruz, CA, USA
+            </span>
+            <span class="month">
+              11
+            </span>
+            <span class="day">
+              15
+            </span>
+            <span class="pages">
+              7 pp
+            </span>
+      </div> 
+
+      <!-- publication entry -->
+      <div class="publication-entry conference">
+            <span class="authors">
+             Chong-U Lim,
+             D. Fox Harrell
+            </span>
+            <span class="year">
+              2015
+            </span>
+            <span class="title">
+               A Data-Driven Approach for Computationally Modeling Players' Avatar Customization Behaviors.
+            </span>
+            <span class="publication">
+              Proceedings of the 11th AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment (AIIDE2015)
+            </span>
+            <span class="location">
+              Santa Cruz, CA, USA
+            </span>
+            <span class="month">
+              11
+            </span>
+            <span class="day">
+              15
+            </span>
+            <span class="pages">
+              7 pp
+            </span>
+      </div>
 
       <!-- publication entry -->
       <div class="publication-entry conference">
@@ -491,6 +597,9 @@
               31
             </span>
             <span class="pages">
+            </span>
+            <span class="file">
+              lim2015understanding.pdf
             </span>
       </div>
 
@@ -940,7 +1049,7 @@
       </div>
 
       <!-- publication entry -->
-      <div class="publication-entry conference">
+      <div class="publication-entry workshop">
             <span class="authors">
                D. Fox Harrell
                Dominic Kao,
